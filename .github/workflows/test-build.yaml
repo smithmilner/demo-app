@@ -32,8 +32,8 @@ jobs:
         with:
           images: ghcr.io/smithmilner/demo/app
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.release.outputs.version}}
-            type=semver,pattern={{major}}.{{minor}},value=${{ steps.release.outputs.version}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
 
       - name: Set up Docker Buildx
 
@@ -50,13 +50,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push release tag
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          git config pull.rebase true
-          git pull
-          git push --follow-tags
-
       - name: Build & Push image
         uses: docker/build-push-action@v2
         with:
@@ -67,3 +60,10 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Push release tag
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          git config pull.rebase true
+          git pull
+          git push --follow-tags
