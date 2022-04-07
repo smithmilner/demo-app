@@ -21,10 +21,13 @@ jobs:
         run: yarn test
 
       - name: Tag new version
+        id: release
         run: |
           git config --global user.name "github"
           git config --global user.email "github@users.noreply.github.com"
           yarn version --patch
+          VERSION=$(cat ./package.json | grep -m 1 version | sed 's/[^0-9.]//g')
+          echo "::set-output name=version::$VERSION"
 
       - name: Docker meta
         id: meta
@@ -32,8 +35,8 @@ jobs:
         with:
           images: ghcr.io/smithmilner/demo/app
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{version}},value=${{ steps.release.outputs.version}}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.release.outputs.version}}
 
       - name: Set up Docker Buildx
 
