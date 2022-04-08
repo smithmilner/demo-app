@@ -10,7 +10,7 @@ const APP_ENV = process.env.APP_ENV || 'dev'
 const name = process.env.NAME
 
 app.get('/', (req, res) => {
-  res.send(`${APP_ENV}: Hello ${name}!`)
+  res.send(`${APP_ENV}: Goodbye ${name}!`)
 })
 
 app.listen(port, () => {
